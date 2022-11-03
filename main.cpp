@@ -32,6 +32,8 @@ class Track {
 class Player {
   private:
     Track track[3];
+    bool trackPlayback = false;
+    bool trackPause = false;
   public:
     void init (std::string &name) {
         for (int i = 0;i < 3;i++) {
@@ -40,26 +42,39 @@ class Player {
             std::time_t t = std::time(nullptr);
             std::tm* data = std::localtime(&t);
             track[i].setData(data);
-            int dur = rand() % 180 + 120;// длительность трека от 2 до 3 минут
+            int dur = rand() % 180 + 120;
             track[i].setDuration(dur);
         }
     }
-    int play (std::string const &name, bool &trackPlayback, bool &trackPause) {
+    int play (std::string &name) {
         for (int i = 0;i < 3;i++) {
             if (name == track[i].getTrackName() && !trackPlayback && !trackPause) {
                 trackPlayback = true;
+                //trackPause = false;
                 std::cout << "Track playback has started:" << std::endl;
                 std::cout << "Track name: " << track[i].getTrackName() << std::endl;
                 std::cout << "Date of creation: " << std::asctime(track[i].getData());
                 std::cout << "Duration: " << track[i].getDuration() << " sec" << std::endl;
                 return 0;
-            } else if (i == 2 && !trackPlayback && !trackPause) {
-                std::cout << "Track is not found" << std::endl;
+            } else if (name == track[i].getTrackName() && !trackPlayback && trackPause) {
+                //trackPlayback = true;
+                trackPause = false;
+                std::cout << "Track playback has started:" << std::endl;
+                std::cout << "Track name: " << track[i].getTrackName() << std::endl;
+                std::cout << "Date of creation: " << std::asctime(track[i].getData());
+                std::cout << "Duration: " << track[i].getDuration() << " sec" << std::endl;
                 return 1;
+            } else if (trackPlayback) {
+                std::cout << "The audio track is already playing right now" << std::endl;
+                return 2;
+            }
+            else if (i == 2 && !trackPlayback && !trackPause) {
+                std::cout << "Track is not found" << std::endl;
+                return 3;
             }
         }
     }
-    int pause (bool &trackPause, bool &trackPlayback) {
+    int pause () {
         if (!trackPlayback || trackPause) {
             return 0;
         } else {
@@ -69,8 +84,7 @@ class Player {
             return 1;
         }
     }
-
-    void next (bool &trackPlayback, std::string &name) {
+    void next (std::string &name) {
         if (trackPlayback) {
             std::srand(std::time(nullptr));
             int i = std::rand() % 3;
@@ -81,12 +95,17 @@ class Player {
             std::cout << "Duration: " << track[i].getDuration() << " sec" << std::endl;
         }
     }
-
-    void stop (bool &trackPlayback) {
+    void stop () {
         if (trackPlayback) {
             std::cout << "Track playback is stopped" << std::endl;
             trackPlayback = false;
         }
+    }
+    bool getPlaybackStatus () {
+        return trackPlayback;
+    }
+    bool getPauseStatus () {
+        return trackPause;
     }
 };
 
@@ -94,29 +113,24 @@ int main() {
     Player* myPlayer = new Player;
     std::string name;
     myPlayer->init(name);
-    bool trackPlayback = false;
-    bool trackPause = false;
     while (true) {
         std::string command;
         std::cout << "Input the command: ";
         std::cin >> command;
         if (command == "play") {
-            if (trackPause) {
-                trackPause = false;
-                myPlayer->play(name, trackPlayback, trackPause);
-            } else if (trackPlayback) {
-                continue;
-            } else {
+            if (!myPlayer->getPlaybackStatus() && !myPlayer->getPauseStatus()) {
                 std::cout << "Input the name of track: ";
                 std::cin >> name;
-                myPlayer->play(name, trackPlayback, trackPause);
+                myPlayer->play(name);
+            } else {
+                myPlayer->play(name);
             }
         } else if (command == "pause") {
-            myPlayer->pause(trackPause, trackPlayback);
+            myPlayer->pause();
         } else if (command == "next") {
-            myPlayer->next(trackPlayback, name);
+            myPlayer->next(name);
         } else if (command == "stop") {
-            myPlayer->stop(trackPlayback);
+            myPlayer->stop();
         } else if (command == "exit") {
             delete myPlayer;
             return 0;
@@ -124,5 +138,4 @@ int main() {
             std::cout << "Input error! Try again" << std::endl;
         }
     }
-
 }
