@@ -90,7 +90,6 @@ class Player {
     }
     void next (std::string &name) {
         if (trackPlayback) {
-            std::srand(std::time(nullptr));
             int i = std::rand() % 3;
             name = "Unknown" + std::to_string(i + 1);
             std::cout << "Track playback has started:" << std::endl;
