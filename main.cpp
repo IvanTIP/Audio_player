@@ -27,6 +27,13 @@ class Track {
     void setDuration (int dur) {
         trackDuration = dur;
     }
+
+    void showInfo () {
+        std::cout << "Track name: " << trackName << std::endl;
+        std::cout << "Date of creation: " << trackData.tm_mday << "/" << trackData.tm_mon + 1 << "/" << trackData.tm_year + 1900
+                  << " " << trackData.tm_hour << ":" << trackData.tm_min << ":" << trackData.tm_sec << std::endl;
+        std::cout << "Duration: " << trackDuration << " sec" << std::endl;
+    }
 };
 
 class Player {
@@ -55,18 +62,12 @@ class Player {
             if (name == track[i].getTrackName() && !trackPlayback && !trackPause) {
                 trackPlayback = true;
                 std::cout << "Track playback has started:" << std::endl;
-                std::cout << "Track name: " << track[i].getTrackName() << std::endl;
-                std::cout << "Date of creation: " << track[i].getData().tm_mday << "/" << track[i].getData().tm_mon + 1 << "/" << track[i].getData().tm_year + 1900
-                          << " " << track[i].getData().tm_hour << ":" << track[i].getData().tm_min << ":" << track[i].getData().tm_sec << std::endl;
-                std::cout << "Duration: " << track[i].getDuration() << " sec" << std::endl;
+                track[i].showInfo();
                 return 0;
             } else if (name == track[i].getTrackName() && !trackPlayback && trackPause) {
                 trackPause = false;
                 std::cout << "Track playback has started:" << std::endl;
-                std::cout << "Track name: " << track[i].getTrackName() << std::endl;
-                std::cout << "Date of creation: " << track[i].getData().tm_mday << "/" << track[i].getData().tm_mon + 1 << "/" << track[i].getData().tm_year + 1900
-                          << " " << track[i].getData().tm_hour << ":" << track[i].getData().tm_min << ":" << track[i].getData().tm_sec << std::endl;
-                std::cout << "Duration: " << track[i].getDuration() << " sec" << std::endl;
+                track[i].showInfo();
                 return 1;
             } else if (trackPlayback) {
                 std::cout << "The audio track is already playing right now" << std::endl;
@@ -93,10 +94,7 @@ class Player {
             int i = std::rand() % 3;
             name = "Unknown" + std::to_string(i + 1);
             std::cout << "Track playback has started:" << std::endl;
-            std::cout << "Track name: " << track[i].getTrackName() << std::endl;
-            std::cout << "Date of creation: " << track[i].getData().tm_mday << "/" << track[i].getData().tm_mon + 1 << "/" << track[i].getData().tm_year + 1900
-                      << " " << track[i].getData().tm_hour << ":" << track[i].getData().tm_min << ":" << track[i].getData().tm_sec << std::endl;
-            std::cout << "Duration: " << track[i].getDuration() << " sec" << std::endl;
+            track[i].showInfo();
         }
     }
     void stop () {
